@@ -1,0 +1,35 @@
+<div id="header"><h2>Sound List</h2></div>
+<div id="main">
+  <div id="content-1">
+    <h3 class="soundSource">SoundCloud</h3>
+    <ul>
+      <li ng-repeat="track in soundCloudTracks">
+        <span ng-click="playTrack(track, 'soundcloud')">{{track.title}}</span>
+        <br>
+        <img class="artwork" src={{track.artwork_url}}>
+      </li>
+    </ul>
+  </div>
+  <div id="content-2">
+    <div id="content-2-1">
+      <h3 class="soundSource">YouTube</h3>
+      <ul>
+        <li ng-repeat="track in youTubeTracks">
+          <span ng-click="playTrack(track, 'youtube')">{{track.snippet.title}}</span>
+          <br>
+          <img class="artwork" src={{track.snippet.thumbnails.default.url}}>
+        </li>
+      </ul>
+    </div>
+    <div id="content-2-2">
+    <h3 class="soundSource">Spotify (beta)</h3>
+      <ul>
+        <li ng-repeat="track in spotifyTracks">
+          <span ng-click="playTrack(track, 'spotify')">{{track.name}}</span>
+          <br>
+          <img class="artwork" src={{track.album.images[1].url}}>
+        </li>
+      </ul>
+    </div>
+  </div>
+</div>
