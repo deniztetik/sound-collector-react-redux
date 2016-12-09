@@ -1,16 +1,22 @@
 import React from 'react'
 
-const SongList2 = ({source: {srcName, divId: {divId}}}) => {
+const SongList2 = ({source: {srcName, results, divId: {divId}}, playTrack}) => {
+  console.log('results', results.items)
+  results.items = results.items || []
   return (
     <div id="content-2">
       <div id={divId}>
         <h3 className="soundSource">{srcName}</h3>
         <ul>
-          <li repeat="track in soundCloudTracks">
-            <span click="playTrack(track, 'soundcloud')">Title</span>
+        {results.items.map(result => {
+          return (
+          <li>
+            <span onClick={() => playTrack(result, 'YouTube')}>{result.snippet.title}</span>
             <br />
-            <img className="artwork" src="#" />
+            <img className="artwork" src={result.snippet.thumbnails.medium.url} alt="boohoo"/>
           </li>
+        )
+        })}
         </ul>
       </div>
     </div>

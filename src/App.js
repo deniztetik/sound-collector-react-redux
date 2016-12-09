@@ -6,6 +6,9 @@ import Player from './presentational/player/Player'
 import Search from './presentational/search/Search'
 import SongLists from './presentational/songLists/SongLists'
 import SC from './config/soundcloud'
+import YOUTUBE_API_KEY from './config/youtubeID'
+
+import request from 'request'
 
 class App extends Component {
   constructor() {
@@ -54,13 +57,15 @@ class App extends Component {
   }
 
   updateSourceResults(sounds, source) {
+    const searchResults = this.state.searchResults
     if (source === 'SoundCloud') {
-      const searchResults = this.state.searchResults
-      searchResults.sources[0].results = sounds;
-      this.setState({
-        searchResults,
-      })
+      searchResults.sources[0].results = sounds
+    } else if (source === 'YouTube') {
+      searchResults.sources[1].results = sounds
     }
+    this.setState({
+      searchResults,
+    })
   }
 
   querySoundCloud(query) {
@@ -72,19 +77,49 @@ class App extends Component {
     });
   }
 
-  // queryYouTube(query) {
-  //
-  // }
-
-  playTrack(track) {
-    let trackUrl = track.stream_url
-    trackUrl = "https://w.soundcloud.com/player/?url=" + trackUrl
-    trackUrl = trackUrl.split("/").slice(0,9).join("/")
-    let currentSound = this.state.currentSound
-    currentSound = trackUrl
-    this.setState({
-      currentSound,
+  queryYouTube(query) {
+    const that = this
+    request({
+      method: 'GET',
+      url: 'https://www.googleapis.com/youtube/v3/search',
+      qs: {
+        part: "snippet",
+        q: query,
+        key: YOUTUBE_API_KEY,
+        maxResults: "10"
+      }
+    }, (error, response, body) => {
+      if (error) console.log("error")
+      else {
+        console.log(JSON.parse(body))
+        that.updateSourceResults(JSON.parse(body), 'YouTube')
+      }
     })
+  }
+
+  playTrack(track, source) {
+    if (source === 'YouTube') {
+      console.log(track)
+      // var videoId = data.track.id.videoId;
+      // var trackUrl = "https://www.youtube.com/embed/" + videoId + "/?autoplay=1";
+      // $scope.currentlyPlaying = $sce.trustAsResourceUrl(trackUrl);
+      const videoId = track.id.videoId
+      const trackUrl = "https://www.youtube.com/embed/" + videoId + "/?autoplay=1"
+      let currentSound = this.state.currentSound
+      currentSound = trackUrl
+      this.setState({
+        currentSound,
+      })
+    } else {
+      let trackUrl = track.stream_url
+      trackUrl = "https://w.soundcloud.com/player/?url=" + trackUrl
+      trackUrl = trackUrl.split("/").slice(0,9).join("/") + '?auto_play=true'
+      let currentSound = this.state.currentSound
+      currentSound = trackUrl
+      this.setState({
+        currentSound,
+      })
+    }
   }
 
   render() {

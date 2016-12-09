@@ -15,7 +15,9 @@ const SongLists = ({searchResults, playTrack}) => {
               <SongList  source={source}
                          playTrack={playTrack}
               /> :
-              <SongList2 source={source}/>
+              <SongList2 source={source}
+                         playTrack={playTrack}
+              />
           )
         })
       }
