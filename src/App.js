@@ -32,8 +32,16 @@ class App extends Component {
                          }
                        }
                      ]
-                     }
+                  }
     }
+    this.handleSearchChange = this.handleSearchChange.bind(this)
+  }
+
+  handleSearchChange(e) {
+    const nextState = Object.assign({},
+                                    this.state,
+                                    { searchKeyword: e.target.value });
+    this.setState(nextState);
   }
 
   render() {
@@ -50,8 +58,10 @@ class App extends Component {
           To get started, edit <code>src/App.js</code> and save to reload.
         </p>
         <Player currentSound={currentSound}/>
-        <Search searchKeyword={searchKeyword}/>
-        <SongLists searchResults={searchResults}/>
+        <Search searchKeyword={searchKeyword}
+                handleChange={this.handleSearchChange}
+        />
+        <SongLists searchResults={searchResults} />
       </div>
     )
   }
