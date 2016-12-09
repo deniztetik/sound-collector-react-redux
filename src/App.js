@@ -4,18 +4,42 @@ import './App.css'
 
 import Player from './presentational/player/Player'
 import Search from './presentational/search/Search'
-import SongList from './presentational/songList/SongList'
+import SongLists from './presentational/songLists/SongLists'
 
 class App extends Component {
   constructor() {
     super()
-    this.setState({
+    this.state = {
+      searchKeyword: '',
       currentSound: {},
-      searchResults: {}
-    })
+      searchResults: { sources: [
+                       {
+                         srcName: "SoundCloud",
+                         divId: "content-1"
+                       },
+                       {
+                         srcName: "YouTube",
+                         divId: {
+                           name: "content-2",
+                           divId: "content-2-1"
+                         }
+                       },
+                       {
+                         srcName: "Spotify",
+                         divId: {
+                           name:"content-2",
+                           divId: "content-2-2"
+                         }
+                       }
+                     ]
+                     }
+    }
   }
 
   render() {
+    const currentSound = this.state ? this.state.currentSound : {}
+    const searchResults = this.state ? this.state.searchResults : {}
+    const searchKeyword = this.state ? this.state.searchKeyword : {}
     return (
       <div className="App">
         <div className="App-header">
@@ -25,9 +49,9 @@ class App extends Component {
         <p className="App-intro">
           To get started, edit <code>src/App.js</code> and save to reload.
         </p>
-        <Player currentSound={this.state.currentSound}/>
-        <Search />
-        <SongList />
+        <Player currentSound={currentSound}/>
+        <Search searchKeyword={searchKeyword}/>
+        <SongLists searchResults={searchResults}/>
       </div>
     )
   }
