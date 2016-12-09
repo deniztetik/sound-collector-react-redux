@@ -2,7 +2,7 @@ import React from 'react'
 import SongList from './songList/SongList'
 import SongList2 from './songList2/SongList2'
 
-const SongLists = ({searchResults}) => {
+const SongLists = ({searchResults, playTrack}) => {
   const sources = searchResults.sources || []
   return (
   <div>
@@ -12,7 +12,9 @@ const SongLists = ({searchResults}) => {
         sources.map(source => {
           return (
             source.divId === "content-1" ?
-              <SongList  source={source}/> :
+              <SongList  source={source}
+                         playTrack={playTrack}
+              /> :
               <SongList2 source={source}/>
           )
         })

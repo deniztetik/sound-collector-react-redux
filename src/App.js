@@ -5,6 +5,7 @@ import './App.css'
 import Player from './presentational/player/Player'
 import Search from './presentational/search/Search'
 import SongLists from './presentational/songLists/SongLists'
+import SC from './config/soundcloud'
 
 class App extends Component {
   constructor() {
@@ -15,33 +16,75 @@ class App extends Component {
       searchResults: { sources: [
                        {
                          srcName: "SoundCloud",
-                         divId: "content-1"
+                         divId: "content-1",
+                         results: []
                        },
                        {
                          srcName: "YouTube",
                          divId: {
                            name: "content-2",
                            divId: "content-2-1"
-                         }
+                         },
+                         results: []
                        },
                        {
                          srcName: "Spotify",
                          divId: {
                            name:"content-2",
                            divId: "content-2-2"
-                         }
+                         },
+                         results: []
                        }
                      ]
                   }
     }
     this.handleSearchChange = this.handleSearchChange.bind(this)
+    this.playTrack = this.playTrack.bind(this)
   }
 
   handleSearchChange(e) {
-    const nextState = Object.assign({},
-                                    this.state,
-                                    { searchKeyword: e.target.value });
-    this.setState(nextState);
+    this.updateRootLevelState({ searchKeyword: e.target.value })
+    this.querySoundCloud(e.target.value)
+    this.queryYouTube(e.target.value)
+  }
+
+  updateRootLevelState(newProp) {
+    const nextState = Object.assign({}, this.state, newProp)
+    this.setState(nextState)
+  }
+
+  updateSourceResults(sounds, source) {
+    if (source === 'SoundCloud') {
+      const searchResults = this.state.searchResults
+      searchResults.sources[0].results = sounds;
+      this.setState({
+        searchResults,
+      })
+    }
+  }
+
+  querySoundCloud(query) {
+    const that = this
+    SC.get('/tracks', {
+      q: query
+    }).then(function(tracks) {
+      that.updateSourceResults(tracks, 'SoundCloud')
+    });
+  }
+
+  // queryYouTube(query) {
+  //
+  // }
+
+  playTrack(track) {
+    let trackUrl = track.stream_url
+    trackUrl = "https://w.soundcloud.com/player/?url=" + trackUrl
+    trackUrl = trackUrl.split("/").slice(0,9).join("/")
+    let currentSound = this.state.currentSound
+    currentSound = trackUrl
+    this.setState({
+      currentSound,
+    })
   }
 
   render() {
@@ -61,7 +104,9 @@ class App extends Component {
         <Search searchKeyword={searchKeyword}
                 handleChange={this.handleSearchChange}
         />
-        <SongLists searchResults={searchResults} />
+        <SongLists searchResults={searchResults}
+                   playTrack={this.playTrack}
+        />
       </div>
     )
   }
