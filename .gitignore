@@ -15,3 +15,4 @@ build
 npm-debug.log
 src/config/soundcloudID.js
 youtubeID.js
+.idea/
