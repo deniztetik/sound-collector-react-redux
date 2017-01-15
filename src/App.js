@@ -5,8 +5,6 @@ import './App.css'
 import Player from './presentational/player/Player'
 import Search from './presentational/search/Search'
 import SongLists from './presentational/songLists/SongLists'
-import SC from './config/soundcloud'
-import YOUTUBE_API_KEY from './config/youtubeID'
 
 import request from 'request-promise'
 
