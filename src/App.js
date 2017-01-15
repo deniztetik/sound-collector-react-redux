@@ -49,6 +49,7 @@ class App extends Component {
     this.updateRootLevelState({ searchKeyword: e.target.value })
     this.querySoundCloud(e.target.value)
     this.queryYouTube(e.target.value)
+    this.querySpotify(e.target.value)
   }
 
   updateRootLevelState(newProp) {
@@ -62,6 +63,9 @@ class App extends Component {
       searchResults.sources[0].results = sounds
     } else if (source === 'YouTube') {
       searchResults.sources[1].results = sounds
+    } else if (source === 'Spotify') {
+      console.log(sounds)
+      searchResults.sources[2].results = sounds
     }
     this.setState({
       searchResults,
@@ -91,15 +95,32 @@ class App extends Component {
     }, (error, response, body) => {
       if (error) console.log("error")
       else {
-        console.log(JSON.parse(body))
         that.updateSourceResults(JSON.parse(body), 'YouTube')
+      }
+    })
+  }
+
+  querySpotify(query) {
+    const that = this
+    request({
+      method: 'GET',
+      url: 'https://api.spotify.com/v1/search',
+      qs: {
+        q: query,
+        type: "track",
+        limit: "10"
+      }
+    }, (error, response, body) => {
+      if (error) console.log("error")
+      else {
+        console.log(JSON.parse(body))
+        that.updateSourceResults(JSON.parse(body), 'Spotify')
       }
     })
   }
 
   playTrack(track, source) {
     if (source === 'YouTube') {
-      console.log(track)
       // var videoId = data.track.id.videoId;
       // var trackUrl = "https://www.youtube.com/embed/" + videoId + "/?autoplay=1";
       // $scope.currentlyPlaying = $sce.trustAsResourceUrl(trackUrl);
@@ -129,12 +150,8 @@ class App extends Component {
     return (
       <div className="App">
         <div className="App-header">
-          <img src={logo} className="App-logo" alt="logo" />
-          <h2>Welcome to React</h2>
+          <h2>Sound Collector</h2>
         </div>
-        <p className="App-intro">
-          To get started, edit <code>src/App.js</code> and save to reload.
-        </p>
         <Player currentSound={currentSound}/>
         <Search searchKeyword={searchKeyword}
                 handleChange={this.handleSearchChange}

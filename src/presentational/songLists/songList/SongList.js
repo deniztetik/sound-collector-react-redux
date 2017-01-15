@@ -1,7 +1,6 @@
 import React from 'react'
 
 const SongList = ({playTrack, source: {srcName, results}}) => {
-  console.log(results);
   return (
     <div id="content-1">
       <h3 className="soundSource">{srcName}</h3>

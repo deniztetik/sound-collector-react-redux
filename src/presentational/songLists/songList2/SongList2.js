@@ -1,7 +1,6 @@
 import React from 'react'
 
 const SongList2 = ({source: {srcName, results, divId: {divId}}, playTrack}) => {
-  console.log('results', results.items)
   results.items = results.items || []
   return (
     <div id="content-2">
