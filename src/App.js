@@ -8,7 +8,7 @@ import SongLists from './presentational/songLists/SongLists'
 import SC from './config/soundcloud'
 import YOUTUBE_API_KEY from './config/youtubeID'
 
-import request from 'request'
+import request from 'request-promise'
 
 class App extends Component {
   constructor() {
@@ -46,76 +46,30 @@ class App extends Component {
   }
 
   handleSearchChange(e) {
-    this.updateRootLevelState({ searchKeyword: e.target.value })
-    this.querySoundCloud(e.target.value)
-    this.queryYouTube(e.target.value)
-    this.querySpotify(e.target.value)
-  }
-
-  updateRootLevelState(newProp) {
-    const nextState = Object.assign({}, this.state, newProp)
+    const nextState = Object.assign({}, this.state, {searchKeyword: e.target.value})
     this.setState(nextState)
+    this.querySources(e.target.value)
+      .then(result => {
+        this.updateSourceResults(result)
+      })
   }
 
-  updateSourceResults(sounds, source) {
+  querySources(query) {
+    return request({
+      method: 'GET',
+      url: 'http://localhost:3000/api/v1/sounds',
+      qs: {query: query},
+      json: true
+    })
+  }
+
+  updateSourceResults({SoundCloud, YouTube, Spotify}) {
     const searchResults = this.state.searchResults
-    if (source === 'SoundCloud') {
-      searchResults.sources[0].results = sounds
-    } else if (source === 'YouTube') {
-      searchResults.sources[1].results = sounds
-    } else if (source === 'Spotify') {
-      console.log(sounds)
-      searchResults.sources[2].results = sounds
-    }
+    searchResults.sources[0].results = SoundCloud
+    searchResults.sources[1].results = JSON.parse(YouTube)
+    searchResults.sources[2].results = JSON.parse(Spotify)
     this.setState({
       searchResults,
-    })
-  }
-
-  querySoundCloud(query) {
-    const that = this
-    SC.get('/tracks', {
-      q: query
-    }).then(function(tracks) {
-      that.updateSourceResults(tracks, 'SoundCloud')
-    });
-  }
-
-  queryYouTube(query) {
-    const that = this
-    request({
-      method: 'GET',
-      url: 'https://www.googleapis.com/youtube/v3/search',
-      qs: {
-        part: "snippet",
-        q: query,
-        key: YOUTUBE_API_KEY,
-        maxResults: "10"
-      }
-    }, (error, response, body) => {
-      if (error) console.log("error")
-      else {
-        that.updateSourceResults(JSON.parse(body), 'YouTube')
-      }
-    })
-  }
-
-  querySpotify(query) {
-    const that = this
-    request({
-      method: 'GET',
-      url: 'https://api.spotify.com/v1/search',
-      qs: {
-        q: query,
-        type: "track",
-        limit: "10"
-      }
-    }, (error, response, body) => {
-      if (error) console.log("error")
-      else {
-        console.log(JSON.parse(body))
-        that.updateSourceResults(JSON.parse(body), 'Spotify')
-      }
     })
   }
 
