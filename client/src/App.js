@@ -48,6 +48,11 @@ class App extends Component {
     this.setState(nextState)
     this.querySources(e.target.value)
       .then(result => {
+        // format results properly
+        // let parsedResult = result
+        // parsedResult[1] = {
+        //   result[1]
+        // }
         this.updateSourceResults(result)
       })
   }
@@ -73,9 +78,6 @@ class App extends Component {
 
   playTrack(track, source) {
     if (source === 'YouTube') {
-      // var videoId = data.track.id.videoId;
-      // var trackUrl = "https://www.youtube.com/embed/" + videoId + "/?autoplay=1";
-      // $scope.currentlyPlaying = $sce.trustAsResourceUrl(trackUrl);
       const videoId = track.id.videoId
       const trackUrl = "https://www.youtube.com/embed/" + videoId + "/?autoplay=1"
       let currentSound = this.state.currentSound

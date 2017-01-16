@@ -15,10 +15,10 @@ SC.init({
 app.use(express.static(__dirname + '/../build'))
 
 // to make parsing requests easier ///
-app.use(bodyParser.json());
+app.use(bodyParser.json())
 app.use(bodyParser.urlencoded({
   extended: true
-}));
+}))
 
 // query all sound APIs based on keyword
 app.get('/api/v1/sounds', (req, res) => {
@@ -62,7 +62,7 @@ app.get('/api/v1/sounds', (req, res) => {
 })
 
 
-app.listen(3000)
+app.listen(3001)
 
 console.log('Sound Collector is now listening on port 3000')
 
